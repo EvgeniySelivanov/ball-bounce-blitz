@@ -6,7 +6,8 @@ import styled from 'styled-components/native';
 import Obstacles from '../components/Obstacles';
 import UpgradePlatform from '../components/UpgradePlatform';
 import StartMessage from '../components/StartMessage';
-const bgImage = require('../assets/RunTrack.png');
+import Ball from '../components/Ball';
+const bgImage = require('../assets/backGround.png');
 
 const Space = styled(ImageBackground)`
   flex: 1;
@@ -26,19 +27,23 @@ const BallBlitz = () => {
   const screenHeight = Dimensions.get('screen').height;
   const screenWidth = Dimensions.get('screen').width;
   const [isGameOver, setIsGameOver] = useState(false);
+  const ballLeft = screenWidth / 2 ;
+  const [ballBottom, setBallBottom]= useState(screenHeight / 2)
   const [platformPosition, setPlatformPosition] = useState({ x: 175, y: 490 });
   const [score, setScore] = useState(0);
   const [bonus, setBonus] = useState({ quantity: 0, visibility: true });
   const [bonusPosition, setBonusPosition] = useState({
     x: screenWidth / 2 - 25,
-    y: 150,
+    y: 350,
   });
-  const [obstaclesLeft, setObstaclesLeft] = useState(0);
+  const [obstaclesLeft, setObstaclesLeft] = useState(screenWidth);
   const [obstaclesHeight, setObstaclesHeight] = useState(100);
   let obstaclesTimerId;
   let bonusTimerId;
+  let gameTimerId;
   const gap = 100;
-  const obstacleSpeed = 15;
+  const obstacleSpeed = 5;
+  const gravity = 3;
   let renderSpeed = 30;
 
   const platformValueChange = (xPosition) => {
@@ -47,18 +52,31 @@ const BallBlitz = () => {
       x: xPosition,
     }));
   };
+
+  useEffect(() => {
+    if (ballBottom > 0&& isGameOver) {
+      gameTimerId = setInterval(() => {
+        setBallBottom(ballBottom => ballBottom - gravity)
+      },30)
+  
+      return () => {
+        clearInterval(gameTimerId);
+      }
+    }
+  }, [ballBottom,isGameOver])
+  
   //start first obstacle
   useEffect(() => {
-    if (obstaclesLeft < screenWidth && isGameOver) {
+    if (obstaclesLeft > -60 && isGameOver) {
       obstaclesTimerId = setInterval(() => {
-        setObstaclesLeft((obstaclesLeft) => obstaclesLeft + obstacleSpeed);
+        setObstaclesLeft((obstaclesLeft) => obstaclesLeft - obstacleSpeed);
       }, renderSpeed);
       return () => {
         clearInterval(obstaclesTimerId);
       };
     } else {
       setScore((score) => score + 1);
-      setObstaclesLeft(0);
+      setObstaclesLeft(screenWidth);
       setObstaclesHeight(Math.floor(Math.random() * (284 + 1)));
       setBonusPosition((bonusPosition) => ({
         ...bonusPosition,
@@ -123,6 +141,7 @@ const BallBlitz = () => {
   const gameOver = () => {
     clearInterval(bonusTimerId);
     clearInterval(obstaclesTimerId);
+    clearInterval(gameTimerId);
     setScore(0);
     setBonus((bonus) => ({
       ...bonus,
@@ -144,7 +163,7 @@ const BallBlitz = () => {
   return (
     <TouchableWithoutFeedback onPress={startGame}>
     <Space source={bgImage}>
-    
+      <Ball ballBottom={ballBottom} ballLeft={ballLeft}/>
       <Obstacles
         leftCoordinate={obstaclesLeft}
         gap={gap}
@@ -158,9 +177,6 @@ const BallBlitz = () => {
       
     </Space>
     </TouchableWithoutFeedback>
-    
-    
-   
   );
 };
 

@@ -22,6 +22,7 @@ const Figure2 = styled(View)`
   left: ${leftCoordinate}px;
   top:  ${obstaclesHeight+gap}px;
   width: 30px;
+  margin-bottom:25px;
 `;
   return (
     <>

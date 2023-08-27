@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 
 import { View, StyleSheet, PanResponder, ImageBackground } from 'react-native';
 
-const bgImage = require('../assets/ball_rast.png');
+const bgImage = require('../assets/platform.png');
 
 const Platform = ({ platformValueChange }) => {
   const [position, setPosition] = useState({ x: 175, y: 490 });
@@ -31,13 +31,13 @@ const Platform = ({ platformValueChange }) => {
 const styles = StyleSheet.create({
   draggable: {
     position: 'absolute',
-    width: 50,
-    height: 100,
+    width: 75,
+    height: 50,
     zIndex: 10,
   },
   containerImg: {
-    width: 50,
-    height: 100,
+    width: 100,
+    height: 50,
   },
 });
 export default Platform;
