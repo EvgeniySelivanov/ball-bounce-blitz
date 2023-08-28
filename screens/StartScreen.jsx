@@ -3,6 +3,8 @@ import axios from 'axios';
 import { Loading } from '../components/Loading';
 import WebViewScreen from './WebViewScreen';
 import BallBlitz from './BallBlitz';
+import Menu from './Menu';
+
 
 const initialState = {
   loading: true,
@@ -40,7 +42,7 @@ export const StartScreen = ({ navigation }) => {
     return <WebViewScreen />;
   };
   const getGame = () => {
-    return <BallBlitz />;
+    return <Menu />;
   };
 
   if (isLoading.loading) {

@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native';
-import { ImageBackground, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  ImageBackground,
+  Dimensions,
+} from 'react-native';
+import { useNavigation , useRoute} from '@react-navigation/native';
+import { Audio } from 'expo-av';
 import Platform from '../components/Platform';
 import styled from 'styled-components/native';
 import Obstacles from '../components/Obstacles';
@@ -24,8 +32,11 @@ const StyledText = styled.Text`
 `;
 
 const BallBlitz = () => {
+  const route = useRoute();
+  console.log('size platform>>>',route.params.size);
   const screenHeight = Dimensions.get('screen').height;
   const screenWidth = Dimensions.get('screen').width;
+  const [music, setMusic] = useState(true);
   const [isGameOver, setIsGameOver] = useState(false);
   const ballLeft = screenWidth / 3;
   const [ballBottom, setBallBottom] = useState(screenHeight / 2);
@@ -43,9 +54,10 @@ const BallBlitz = () => {
   let bonusTimerId;
   let gameTimerId;
   const gap = 200;
-  const obstacleSpeed = 5;
-  const gravity = 8;
-  let renderSpeed = 30;
+  const obstacleSpeed = route.params.speed;
+  const gravity = 15;
+  let renderSpeed = 40;
+
   //position platform
   const platformValueChange = (xPosition) => {
     console.log(platformPosition.y);
@@ -66,6 +78,13 @@ const BallBlitz = () => {
       };
     }
   }, [ballBottom, isGameOver]);
+
+  //start music
+  useEffect(() => {
+    if (music && isGameOver) {
+      playMusic();
+    }
+  }, [isGameOver]);
 
   //start  obstacles
   useEffect(() => {
@@ -135,9 +154,11 @@ const BallBlitz = () => {
       ballBottom <= 300
     ) {
       jump();
+      playSound();
     }
   }, [ballBottom]);
   //jump function
+
   const jump = () => {
     if (isGameOver && ballBottom < screenHeight) {
       setBallBottom((ballBottom) => ballBottom + jumpPower);
@@ -145,25 +166,51 @@ const BallBlitz = () => {
     }
   };
 
-   //check for collisions
-   useEffect(() => {
- 
+  const playSound = async () => {
+    console.log('play shot');
+    const soundObject = new Audio.Sound();
+    try {
+      await soundObject.loadAsync(require('../assets/sound.mp3'));
+      await soundObject.playAsync();
+      // Обязательно выгрузите звуковой объект после воспроизведения
+      await soundObject.unloadAsync();
+    } catch (error) {
+      console.log('Ошибка при воспроизведении звука', error);
+    }
+  };
+
+  const playMusic = async () => {
+    console.log('music');
+    const soundObject = new Audio.Sound();
+    try {
+      await soundObject.loadAsync(require('../assets/music.mp3'));
+      await soundObject.playAsync();
+      // Обязательно выгрузите звуковой объект после воспроизведения
+      await soundObject.unloadAsync();
+    } catch (error) {
+      console.log('Ошибка при воспроизведении звука', error);
+    }
+  };
+
+  //check for collisions
+  useEffect(() => {
     if (
-      (ballBottom <=obstaclesHeight-25 ||
-      ballBottom >= (obstaclesHeight + gap +25)||ballBottom <250) &&
-      (obstaclesLeft > ballLeft -25 && obstaclesLeft < ballLeft + 25 )
-      
-      // || 
+      (ballBottom <= obstaclesHeight - 25 ||
+        ballBottom >= obstaclesHeight + gap + 25 ||
+        ballBottom < 250) &&
+      obstaclesLeft > ballLeft - 25 &&
+      obstaclesLeft < ballLeft + 25
+
+      // ||
       // ((birdBottom < (obstaclesNegHeightTwo + obstacleHeight + 30) ||
       // birdBottom > (obstaclesNegHeightTwo + obstacleHeight + gap -30)) &&
       // (obstaclesLeftTwo > screenWidth/2 -30 && obstaclesLeftTwo < screenWidth/2 + 30 )
       // )
-      ) 
-      {
-      console.log('game over')
+    ) {
+      console.log('game over');
       gameOver();
     }
-  })
+  });
 
   const gameOver = () => {
     clearInterval(bonusTimerId);
@@ -198,10 +245,10 @@ const BallBlitz = () => {
           screenHeight={screenHeight}
           obstaclesHeight={obstaclesHeight}
         />
-        {bonus.visibility && <UpgradePlatform bonusPosition={bonusPosition} />}
+        {/*bonus.visibility && <UpgradePlatform bonusPosition={bonusPosition} />*/}
         <StyledText>Score:{isGameOver ? score + bonus.quantity : 0}</StyledText>
         <StartMessage isGameOver={isGameOver} />
-        <Platform platformValueChange={platformValueChange} />
+        <Platform platformValueChange={platformValueChange} platformWidth={route.params.size} />
       </Space>
     </TouchableWithoutFeedback>
   );
