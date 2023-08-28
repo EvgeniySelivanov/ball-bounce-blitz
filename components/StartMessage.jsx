@@ -16,17 +16,17 @@ const StartMessage = ({isGameOver}) => {
   );
 }
 const styles = StyleSheet.create({
-  button: {
-    position: 'absolute',
-    top: 100,
-    left: 185,
-    width: 170,
-    height: 70,
-    margin: 10,
-    padding: 5,
-    borderRadius: 15,
-    zIndex: 20,
-  },
+  // button: {
+  //   position: 'absolute',
+  //   top: 100,
+  //   left: 185,
+  //   width: 170,
+  //   height: 70,
+  //   margin: 10,
+  //   padding: 5,
+  //   borderRadius: 15,
+  //   zIndex: 20,
+  // },
  
   buttonGameOver: {
     top:90,

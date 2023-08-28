@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   containerImg: {
-    width: 100,
+    width: 75,
     height: 50,
   },
 });

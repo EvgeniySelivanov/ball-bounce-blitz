@@ -8,7 +8,6 @@ import styled from 'styled-components/native';
 const Ball = ({ ballBottom, ballLeft }) => {
   const ballDiameter = 50;
   const bgBall = require('../assets/ball.png');
-console.log(ballBottom);
 const BallStyle=styled(ImageBackground)`
 position: absolute;
 width: ${ballDiameter}px;

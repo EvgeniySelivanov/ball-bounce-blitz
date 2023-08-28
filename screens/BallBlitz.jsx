@@ -27,8 +27,9 @@ const BallBlitz = () => {
   const screenHeight = Dimensions.get('screen').height;
   const screenWidth = Dimensions.get('screen').width;
   const [isGameOver, setIsGameOver] = useState(false);
-  const ballLeft = screenWidth / 2 ;
-  const [ballBottom, setBallBottom]= useState(screenHeight / 2)
+  const ballLeft = screenWidth / 3;
+  const [ballBottom, setBallBottom] = useState(screenHeight / 2);
+  const [jumpPower, setJumpPower] = useState(50);
   const [platformPosition, setPlatformPosition] = useState({ x: 175, y: 490 });
   const [score, setScore] = useState(0);
   const [bonus, setBonus] = useState({ quantity: 0, visibility: true });
@@ -41,31 +42,32 @@ const BallBlitz = () => {
   let obstaclesTimerId;
   let bonusTimerId;
   let gameTimerId;
-  const gap = 100;
+  const gap = 200;
   const obstacleSpeed = 5;
-  const gravity = 3;
+  const gravity = 8;
   let renderSpeed = 30;
-
+  //position platform
   const platformValueChange = (xPosition) => {
+    console.log(platformPosition.y);
     setPlatformPosition((platformPosition) => ({
       ...platformPosition,
       x: xPosition,
     }));
   };
-
+  //ball drop
   useEffect(() => {
-    if (ballBottom > 0&& isGameOver) {
+    if (ballBottom > 0 && isGameOver) {
       gameTimerId = setInterval(() => {
-        setBallBottom(ballBottom => ballBottom - gravity)
-      },30)
-  
+        setBallBottom((ballBottom) => ballBottom - gravity);
+      }, 10);
+      setJumpPower(Math.floor(Math.random() * (250 - 50 + 1)) + 50);
       return () => {
         clearInterval(gameTimerId);
-      }
+      };
     }
-  }, [ballBottom,isGameOver])
-  
-  //start first obstacle
+  }, [ballBottom, isGameOver]);
+
+  //start  obstacles
   useEffect(() => {
     if (obstaclesLeft > -60 && isGameOver) {
       obstaclesTimerId = setInterval(() => {
@@ -84,13 +86,13 @@ const BallBlitz = () => {
       }));
     }
   }, [isGameOver, obstaclesLeft]);
-
+  //bonus position
   useEffect(() => {
     if (obstaclesLeft < screenWidth && isGameOver) {
       bonusTimerId = setInterval(() => {
         setBonusPosition((bonusPosition) => ({
           ...bonusPosition,
-          y: obstaclesLeft + 150,
+          y: obstaclesLeft - 150,
         }));
       }, renderSpeed);
       return () => {
@@ -98,30 +100,7 @@ const BallBlitz = () => {
       };
     }
   }, [obstaclesLeft]);
-  
-  useEffect(() => {
-    if ((obstaclesLeft-150) > platformPosition.y && isGameOver) {
-      setBonus((bonus) => ({
-        ...bonus,
-        visibility: true,
-      }));
-    }
-  }, [obstaclesLeft]);
-
-
-  //check collisions
-  useEffect(() => {
-    if (
-      (platformPosition.x <= obstaclesHeight - 25 ||
-        platformPosition.x >= obstaclesHeight+ gap + 25) &&
-      platformPosition.y <= obstaclesLeft + 30 &&
-      obstaclesLeft < platformPosition.y + 100
-    ) {
-      console.log('game over');
-      gameOver();
-    }
-  }, [obstaclesLeft]);
-
+  //bonus used
   useEffect(() => {
     if (
       bonusPosition.x >= platformPosition.x - 50 &&
@@ -137,6 +116,54 @@ const BallBlitz = () => {
       }));
     }
   }, [bonusPosition]);
+  //bonus visibility
+  useEffect(() => {
+    if (obstaclesLeft - 150 > platformPosition.y && isGameOver) {
+      setBonus((bonus) => ({
+        ...bonus,
+        visibility: true,
+      }));
+    }
+  }, [obstaclesLeft]);
+
+  //jump event
+  useEffect(() => {
+    if (
+      platformPosition.x <= ballLeft - 25 &&
+      ballLeft <= platformPosition.x + 75 &&
+      platformPosition.y >= ballBottom &&
+      ballBottom <= 300
+    ) {
+      jump();
+    }
+  }, [ballBottom]);
+  //jump function
+  const jump = () => {
+    if (isGameOver && ballBottom < screenHeight) {
+      setBallBottom((ballBottom) => ballBottom + jumpPower);
+      console.log('jumped');
+    }
+  };
+
+   //check for collisions
+   useEffect(() => {
+ 
+    if (
+      (ballBottom <=obstaclesHeight-25 ||
+      ballBottom >= (obstaclesHeight + gap +25)||ballBottom <250) &&
+      (obstaclesLeft > ballLeft -25 && obstaclesLeft < ballLeft + 25 )
+      
+      // || 
+      // ((birdBottom < (obstaclesNegHeightTwo + obstacleHeight + 30) ||
+      // birdBottom > (obstaclesNegHeightTwo + obstacleHeight + gap -30)) &&
+      // (obstaclesLeftTwo > screenWidth/2 -30 && obstaclesLeftTwo < screenWidth/2 + 30 )
+      // )
+      ) 
+      {
+      console.log('game over')
+      gameOver();
+    }
+  })
 
   const gameOver = () => {
     clearInterval(bonusTimerId);
@@ -157,28 +184,27 @@ const BallBlitz = () => {
   };
   const startGame = () => {
     console.log('game start');
+    setBallBottom(screenHeight / 2);
     setIsGameOver(true);
   };
 
   return (
     <TouchableWithoutFeedback onPress={startGame}>
-    <Space source={bgImage}>
-      <Ball ballBottom={ballBottom} ballLeft={ballLeft}/>
-      <Obstacles
-        leftCoordinate={obstaclesLeft}
-        gap={gap}
-        screenHeight={screenHeight}
-        obstaclesHeight={obstaclesHeight}
-      />
-      {bonus.visibility && <UpgradePlatform bonusPosition={bonusPosition} />}
-      <StyledText>Score:{isGameOver?(score + bonus.quantity):0}</StyledText>
-      <StartMessage isGameOver={isGameOver}/>
-      <Platform platformValueChange={platformValueChange} />
-      
-    </Space>
+      <Space source={bgImage}>
+        <Ball ballBottom={ballBottom} ballLeft={ballLeft} />
+        <Obstacles
+          leftCoordinate={obstaclesLeft}
+          gap={gap}
+          screenHeight={screenHeight}
+          obstaclesHeight={obstaclesHeight}
+        />
+        {bonus.visibility && <UpgradePlatform bonusPosition={bonusPosition} />}
+        <StyledText>Score:{isGameOver ? score + bonus.quantity : 0}</StyledText>
+        <StartMessage isGameOver={isGameOver} />
+        <Platform platformValueChange={platformValueChange} />
+      </Space>
     </TouchableWithoutFeedback>
   );
 };
-
 
 export default BallBlitz;

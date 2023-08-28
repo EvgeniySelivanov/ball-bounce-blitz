@@ -6,7 +6,7 @@ import styled from 'styled-components/native';
 
 const Obstacles = ({leftCoordinate,gap,screenHeight,obstaclesHeight}) => {
   const Figure = styled(View)`
-  position: 'absolute';
+  position: absolute;
   height: ${obstaclesHeight}px;
   border: 2px solid #fffb23;
   background-color: #fffb23;
@@ -15,7 +15,7 @@ const Obstacles = ({leftCoordinate,gap,screenHeight,obstaclesHeight}) => {
   width:30px;
 `;
 const Figure2 = styled(View)`
-  position: 'absolute';
+  position: absolute;
   height:${screenHeight-gap-obstaclesHeight}px;
   border: 2px solid #fffb23;
   background-color: #fffb23;
