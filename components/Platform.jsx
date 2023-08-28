@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 
-
 import { View, StyleSheet, PanResponder, ImageBackground } from 'react-native';
 
 const bgImage = require('../assets/platform.png');
 
-const Platform = ({ platformValueChange,platformWidth }) => {
+const Platform = ({ platformValueChange, platformWidth }) => {
   const [position, setPosition] = useState({ x: 175, y: 490 });
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
@@ -19,10 +18,20 @@ const Platform = ({ platformValueChange,platformWidth }) => {
   });
   return (
     <View
-      style={[styles.draggable, { left: position.x, top: 490 }]}
+      style={{
+        position: 'absolute',
+        width: platformWidth,
+        height: 50,
+        zIndex: 10,
+         left: position.x, 
+         top: 490 ,
+      }}
       {...panResponder.panHandlers}
     >
-      <ImageBackground source={bgImage} style={{width: platformWidth, height: 50,}}>
+      <ImageBackground
+        source={bgImage}
+        style={{ width: platformWidth, height: 50 }}
+      >
         {/* Контент компонента */}
       </ImageBackground>
     </View>
@@ -34,10 +43,6 @@ const styles = StyleSheet.create({
     width: 75,
     height: 50,
     zIndex: 10,
-  },
-  containerImg: {
-    width: 75,
-    height: 50,
   },
 });
 export default Platform;

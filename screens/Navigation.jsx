@@ -15,8 +15,8 @@ const Stack = createNativeStackNavigator();
     <Stack.Navigator>
       <Stack.Screen name="Home" component={StartScreen} options={{ headerShown: false }}/>
       <Stack.Screen name="WebViewScreen" component={WebViewScreen}/>
-      <Stack.Screen name="BallBlitz" component={BallBlitz}/>
-      <Stack.Screen name="Menu" component={Menu}/>
+      <Stack.Screen name="BallBlitz" component={BallBlitz} options={{ headerShown: false }}/>
+      <Stack.Screen name="Menu" component={Menu} options={{ headerShown: false }}/>
     </Stack.Navigator>
   </NavigationContainer>
   )

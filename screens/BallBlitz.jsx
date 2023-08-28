@@ -12,7 +12,7 @@ import { Audio } from 'expo-av';
 import Platform from '../components/Platform';
 import styled from 'styled-components/native';
 import Obstacles from '../components/Obstacles';
-import UpgradePlatform from '../components/UpgradePlatform';
+import Bonus from '../components/Bonus';
 import StartMessage from '../components/StartMessage';
 import Ball from '../components/Ball';
 const bgImage = require('../assets/backGround.png');
@@ -45,22 +45,22 @@ const BallBlitz = () => {
   const [score, setScore] = useState(0);
   const [bonus, setBonus] = useState({ quantity: 0, visibility: true });
   const [bonusPosition, setBonusPosition] = useState({
-    x: screenWidth / 2 - 25,
-    y: 350,
+    x: screenWidth /1.3 - 25,
+    y: Math.floor(Math.random() * (490 - 400 + 1)) + 400,
   });
   const [obstaclesLeft, setObstaclesLeft] = useState(screenWidth);
   const [obstaclesHeight, setObstaclesHeight] = useState(100);
   let obstaclesTimerId;
   let bonusTimerId;
   let gameTimerId;
-  const gap = 200;
+  const gap = 250;
   const obstacleSpeed = route.params.speed;
   const gravity = 15;
   let renderSpeed = 40;
 
   //position platform
   const platformValueChange = (xPosition) => {
-    console.log(platformPosition.y);
+    
     setPlatformPosition((platformPosition) => ({
       ...platformPosition,
       x: xPosition,
@@ -72,7 +72,7 @@ const BallBlitz = () => {
       gameTimerId = setInterval(() => {
         setBallBottom((ballBottom) => ballBottom - gravity);
       }, 10);
-      setJumpPower(Math.floor(Math.random() * (250 - 50 + 1)) + 50);
+      setJumpPower(Math.floor(Math.random() * (200 - 50 + 1)) + 50);
       return () => {
         clearInterval(gameTimerId);
       };
@@ -80,13 +80,15 @@ const BallBlitz = () => {
   }, [ballBottom, isGameOver]);
 
   //start music
-  useEffect(() => {
-    if (music && isGameOver) {
-      playMusic();
-    }
-  }, [isGameOver]);
+  // useEffect(() => {
+  //   if (music && isGameOver) {
+  //     playMusic();
+  //   }
+  // }, [isGameOver]);
 
   //start  obstacles
+
+
   useEffect(() => {
     if (obstaclesLeft > -60 && isGameOver) {
       obstaclesTimerId = setInterval(() => {
@@ -98,20 +100,22 @@ const BallBlitz = () => {
     } else {
       setScore((score) => score + 1);
       setObstaclesLeft(screenWidth);
-      setObstaclesHeight(Math.floor(Math.random() * (284 + 1)));
+      setObstaclesHeight(Math.floor(Math.random() * (400 - 300+1))+300);
       setBonusPosition((bonusPosition) => ({
         ...bonusPosition,
         x: Math.floor(Math.random() * (350 + 1)),
       }));
+      soundObject.unloadAsync();
     }
   }, [isGameOver, obstaclesLeft]);
+
   //bonus position
   useEffect(() => {
     if (obstaclesLeft < screenWidth && isGameOver) {
       bonusTimerId = setInterval(() => {
         setBonusPosition((bonusPosition) => ({
           ...bonusPosition,
-          y: obstaclesLeft - 150,
+          x: obstaclesLeft - 150,
         }));
       }, renderSpeed);
       return () => {
@@ -165,10 +169,9 @@ const BallBlitz = () => {
       console.log('jumped');
     }
   };
-
+  const soundObject = new Audio.Sound();
   const playSound = async () => {
     console.log('play shot');
-    const soundObject = new Audio.Sound();
     try {
       await soundObject.loadAsync(require('../assets/sound.mp3'));
       await soundObject.playAsync();
@@ -179,18 +182,18 @@ const BallBlitz = () => {
     }
   };
 
-  const playMusic = async () => {
-    console.log('music');
-    const soundObject = new Audio.Sound();
-    try {
-      await soundObject.loadAsync(require('../assets/music.mp3'));
-      await soundObject.playAsync();
-      // Обязательно выгрузите звуковой объект после воспроизведения
-      await soundObject.unloadAsync();
-    } catch (error) {
-      console.log('Ошибка при воспроизведении звука', error);
-    }
-  };
+  // const playMusic = async () => {
+  //   console.log('music');
+  //   const soundObject = new Audio.Sound();
+  //   try {
+  //     await soundObject.loadAsync(require('../assets/music.mp3'));
+  //     await soundObject.playAsync();
+  //     // Обязательно выгрузите звуковой объект после воспроизведения
+  //     await soundObject.unloadAsync();
+  //   } catch (error) {
+  //     console.log('Ошибка при воспроизведении звука', error);
+  //   }
+  // };
 
   //check for collisions
   useEffect(() => {
@@ -213,6 +216,7 @@ const BallBlitz = () => {
   });
 
   const gameOver = () => {
+    soundObject.unloadAsync();
     clearInterval(bonusTimerId);
     clearInterval(obstaclesTimerId);
     clearInterval(gameTimerId);
@@ -245,7 +249,7 @@ const BallBlitz = () => {
           screenHeight={screenHeight}
           obstaclesHeight={obstaclesHeight}
         />
-        {/*bonus.visibility && <UpgradePlatform bonusPosition={bonusPosition} />*/}
+        {bonus.visibility && <Bonus bonusPosition={bonusPosition} />}
         <StyledText>Score:{isGameOver ? score + bonus.quantity : 0}</StyledText>
         <StartMessage isGameOver={isGameOver} />
         <Platform platformValueChange={platformValueChange} platformWidth={route.params.size} />

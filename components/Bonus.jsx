@@ -4,8 +4,8 @@ import styled from 'styled-components/native';
 
 const bgImage = require('../assets/bonus.png');
 
-const UpgradePlatform = ({ bonusPosition }) => {
-  const MyUpgradePlatform = styled(ImageBackground)`
+const Bonus = ({ bonusPosition }) => {
+  const MyBonus = styled(ImageBackground)`
   position: 'absolute';
   top: ${bonusPosition.y}px;
   left: ${bonusPosition.x}px;
@@ -16,10 +16,10 @@ const UpgradePlatform = ({ bonusPosition }) => {
 
   return (
     <View>
-      <MyUpgradePlatform source={bgImage}>
+      <MyBonus source={bgImage}>
         {/* Контент компонента */}
-      </MyUpgradePlatform>
+      </MyBonus>
     </View>
   );
 };
-export default UpgradePlatform;
+export default Bonus;

@@ -15,21 +15,9 @@ const StartMessage = ({isGameOver}) => {
      
   );
 }
-const styles = StyleSheet.create({
-  // button: {
-  //   position: 'absolute',
-  //   top: 100,
-  //   left: 185,
-  //   width: 170,
-  //   height: 70,
-  //   margin: 10,
-  //   padding: 5,
-  //   borderRadius: 15,
-  //   zIndex: 20,
-  // },
- 
+const styles = StyleSheet.create({ 
   buttonGameOver: {
-    top:90,
+    top:110,
     paddingTop: 10,
     textAlign: 'center',
     fontSize: 37,
