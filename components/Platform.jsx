@@ -5,6 +5,7 @@ import { View, StyleSheet, PanResponder, ImageBackground } from 'react-native';
 const bgImage = require('../assets/platform.png');
 
 const Platform = ({ platformValueChange, platformWidth }) => {
+  console.log(platformWidth);
   const [position, setPosition] = useState({ x: 175, y: 490 });
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
@@ -37,12 +38,4 @@ const Platform = ({ platformValueChange, platformWidth }) => {
     </View>
   );
 };
-const styles = StyleSheet.create({
-  draggable: {
-    position: 'absolute',
-    width: 75,
-    height: 50,
-    zIndex: 10,
-  },
-});
 export default Platform;

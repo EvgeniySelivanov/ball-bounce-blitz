@@ -1,57 +1,73 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text,ImageBackground, TouchableOpacity } from 'react-native';
+import { View, Text, ImageBackground, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
-const Space = styled(ImageBackground)`
+const Space = styled(LinearGradient)`
   flex: 1;
-  justify-content:center;
-  /* align-items:center; */
+  justify-content: center;
+  padding: 20px;
   margin-top: 25px;
   margin-bottom: 25px;
-  background-color:blue;
+  background-color: blue;
 `;
 
 const StyledText = styled.Text`
- 
-  margin-top:10px;
-  color: #31aa02;
+  margin-top: 10px;
+  color: #cbceca;
+  font-size: 30px;
+  font-weight: 700;
+  border: 2px yellow solid;
+  padding: 7px;
+  border-radius: 5px;
+`;
+const StyledMenu = styled.Text`
+  margin-top: 10px;
+  color: #ffffff;
   font-size: 50px;
   font-weight: 700;
-  border:2px yellow solid;
-  padding:7px;
-  border-radius:5px;
+  text-align: center;
+  padding: 7px;
+`;
+const Span=styled.Text`
+ margin-top: 10px;
+  color: #29f505;
+  font-size: 30px;
+  font-weight: 700;
+  text-align: center;
+  padding: 7px;
 `;
 const Menu = () => {
+  const [speed, setSpeed] = useState(5);
+  const [size, setSize] = useState(75);
 
- const [speed,setSpeed]=useState(5);
- const [size,setSize]=useState(75);
-
-  const changeSpeed=async ()=>{
-   await setSpeed((speed) => speed*2);
-   
-   await navigation.navigate('BallBlitz', { speed ,size});
-  }
-  const play=()=>{
-    navigation.navigate('BallBlitz',{speed ,size});
-  }
-  const changeSize=async ()=>{
-    await setSize((size) => size+25);
-   
-   await navigation.navigate('BallBlitz', { size ,speed});
-
-  }
-  const defaultOption=async()=>{
-    await setSpeed(5);
-    await setSize(75);
-    console.log('speed&size>>', `${speed}&${size}`);
-  }
+  const changeSpeed =  () => {
+    setSpeed((speed) => speed * 2);
+    // console.log('speed>>', speed);
+    // await navigation.navigate('BallBlitz', {speed,size});
+  };
+  const play = () => {
+    navigation.navigate('BallBlitz', {speed,size});
+  };
+  const changeSize =() => {
+     setSize((size) => size + 25);
+    //  console.log('size>>', size);
+    //  navigation.navigate('BallBlitz', { speed,size });
+    
+  };
+  const defaultOption = () => {
+    setSpeed(5);
+    setSize(75);
+    
+  };
   const navigation = useNavigation();
   return (
-    <Space>
+    <Space colors={['rgba(124,189,214,1) 0%', 'rgba(34,108,223,1) 28%']}>
+      <StyledMenu>Menu</StyledMenu>
       <StyledText onPress={play}>Play</StyledText>
-      <StyledText onPress={changeSpeed}>Game speed X2</StyledText>
-      <StyledText onPress={changeSize}>Increase platform size</StyledText>
-      <StyledText onPress={defaultOption}>Default option</StyledText>
+      <StyledText onPress={changeSpeed}>Game speed X2:  <Span>{speed}</Span></StyledText>
+      <StyledText onPress={changeSize}>Increase {`\n`}platform size: <Span>{size}</Span></StyledText>
+      <StyledText onPress={defaultOption}>Reset options</StyledText>
     </Space>
   );
 };

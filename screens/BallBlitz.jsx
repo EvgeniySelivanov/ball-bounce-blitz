@@ -15,6 +15,7 @@ import Obstacles from '../components/Obstacles';
 import Bonus from '../components/Bonus';
 import StartMessage from '../components/StartMessage';
 import Ball from '../components/Ball';
+import Header from '../components/Header';
 const bgImage = require('../assets/backGround.png');
 
 const Space = styled(ImageBackground)`
@@ -33,7 +34,6 @@ const StyledText = styled.Text`
 
 const BallBlitz = () => {
   const route = useRoute();
-  console.log('size platform>>>',route.params.size);
   const screenHeight = Dimensions.get('screen').height;
   const screenWidth = Dimensions.get('screen').width;
   const [music, setMusic] = useState(true);
@@ -242,6 +242,7 @@ const BallBlitz = () => {
   return (
     <TouchableWithoutFeedback onPress={startGame}>
       <Space source={bgImage}>
+        <Header gameOver={gameOver}/>
         <Ball ballBottom={ballBottom} ballLeft={ballLeft} />
         <Obstacles
           leftCoordinate={obstaclesLeft}
@@ -252,7 +253,7 @@ const BallBlitz = () => {
         {bonus.visibility && <Bonus bonusPosition={bonusPosition} />}
         <StyledText>Score:{isGameOver ? score + bonus.quantity : 0}</StyledText>
         <StartMessage isGameOver={isGameOver} />
-        <Platform platformValueChange={platformValueChange} platformWidth={route.params.size} />
+        <Platform platformValueChange={platformValueChange} platformWidth={(route.params.size)?(route.params.size):75} />
       </Space>
     </TouchableWithoutFeedback>
   );
