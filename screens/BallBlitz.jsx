@@ -7,7 +7,7 @@ import {
   ImageBackground,
   Dimensions,
 } from 'react-native';
-import { useNavigation , useRoute} from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { Audio } from 'expo-av';
 import Platform from '../components/Platform';
 import styled from 'styled-components/native';
@@ -36,7 +36,7 @@ const BallBlitz = () => {
   const route = useRoute();
   const screenHeight = Dimensions.get('screen').height;
   const screenWidth = Dimensions.get('screen').width;
-  const [music, setMusic] = useState(true);
+
   const [isGameOver, setIsGameOver] = useState(false);
   const ballLeft = screenWidth / 3;
   const [ballBottom, setBallBottom] = useState(screenHeight / 2);
@@ -45,8 +45,8 @@ const BallBlitz = () => {
   const [score, setScore] = useState(0);
   const [bonus, setBonus] = useState({ quantity: 0, visibility: true });
   const [bonusPosition, setBonusPosition] = useState({
-    x: screenWidth /1.3 - 25,
-    y: Math.floor(Math.random() * (490 - 400 + 1)) + 400,
+    x: screenWidth / 1.3 - 25,
+    y: Math.floor(Math.random() * (490 - 300 + 1)) + 300,
   });
   const [obstaclesLeft, setObstaclesLeft] = useState(screenWidth);
   const [obstaclesHeight, setObstaclesHeight] = useState(100);
@@ -55,12 +55,11 @@ const BallBlitz = () => {
   let gameTimerId;
   const gap = 250;
   const obstacleSpeed = route.params.speed;
-  const gravity = 15;
-  let renderSpeed = 40;
-
+  const gravity = route.params.speedBall;
+  let renderSpeed = 20;
+  let ballTop = screenHeight - ballBottom - 50;
   //position platform
   const platformValueChange = (xPosition) => {
-    
     setPlatformPosition((platformPosition) => ({
       ...platformPosition,
       x: xPosition,
@@ -79,16 +78,7 @@ const BallBlitz = () => {
     }
   }, [ballBottom, isGameOver]);
 
-  //start music
-  // useEffect(() => {
-  //   if (music && isGameOver) {
-  //     playMusic();
-  //   }
-  // }, [isGameOver]);
-
   //start  obstacles
-
-
   useEffect(() => {
     if (obstaclesLeft > -60 && isGameOver) {
       obstaclesTimerId = setInterval(() => {
@@ -100,7 +90,7 @@ const BallBlitz = () => {
     } else {
       setScore((score) => score + 1);
       setObstaclesLeft(screenWidth);
-      setObstaclesHeight(Math.floor(Math.random() * (400 - 300+1))+300);
+      setObstaclesHeight(Math.floor(Math.random() * (400 - 300 + 1)) + 300);
       setBonusPosition((bonusPosition) => ({
         ...bonusPosition,
         x: Math.floor(Math.random() * (350 + 1)),
@@ -117,31 +107,38 @@ const BallBlitz = () => {
           ...bonusPosition,
           x: obstaclesLeft - 150,
         }));
+      
       }, renderSpeed);
       return () => {
         clearInterval(bonusTimerId);
       };
     }
   }, [obstaclesLeft]);
+
   //bonus used
   useEffect(() => {
     if (
-      bonusPosition.x >= platformPosition.x - 50 &&
-      bonusPosition.x <= platformPosition.x + 50 &&
-      bonusPosition.y >= platformPosition.y &&
-      bonusPosition.y <= platformPosition.y + 15
+      bonusPosition.x >= ballLeft-30 &&
+      bonusPosition.x <= ballLeft+ 80 &&
+      bonusPosition.y >= ballTop &&
+      bonusPosition.y <= ballTop + 50
     ) {
       clearInterval(bonusTimerId);
-      setBonus((bonus) => ({
+      if(bonus.visibility){
+        setBonus((bonus) => ({
         ...bonus,
         quantity: bonus.quantity + 1,
         visibility: false,
       }));
+      playSound2();
+    }
+      
     }
   }, [bonusPosition]);
+
   //bonus visibility
   useEffect(() => {
-    if (obstaclesLeft - 150 > platformPosition.y && isGameOver) {
+    if (obstaclesLeft - 150 > ballLeft+50 && isGameOver) {
       setBonus((bonus) => ({
         ...bonus,
         visibility: true,
@@ -161,14 +158,16 @@ const BallBlitz = () => {
       playSound();
     }
   }, [ballBottom]);
-  //jump function
 
+  //jump function
   const jump = () => {
     if (isGameOver && ballBottom < screenHeight) {
       setBallBottom((ballBottom) => ballBottom + jumpPower);
       console.log('jumped');
     }
   };
+
+  //sound effect
   const soundObject = new Audio.Sound();
   const playSound = async () => {
     console.log('play shot');
@@ -178,23 +177,21 @@ const BallBlitz = () => {
       // Обязательно выгрузите звуковой объект после воспроизведения
       await soundObject.unloadAsync();
     } catch (error) {
-      console.log('Ошибка при воспроизведении звука', error);
+      console.log('Sound error>>>', error);
     }
   };
-
-  // const playMusic = async () => {
-  //   console.log('music');
-  //   const soundObject = new Audio.Sound();
-  //   try {
-  //     await soundObject.loadAsync(require('../assets/music.mp3'));
-  //     await soundObject.playAsync();
-  //     // Обязательно выгрузите звуковой объект после воспроизведения
-  //     await soundObject.unloadAsync();
-  //   } catch (error) {
-  //     console.log('Ошибка при воспроизведении звука', error);
-  //   }
-  // };
-
+  const soundObject2 = new Audio.Sound();
+  const playSound2 = async () => {
+    console.log('play bonus');
+    try {
+      await soundObject2.loadAsync(require('../assets/bonus.mp3'));
+      await soundObject2.playAsync();
+      // Обязательно выгрузите звуковой объект после воспроизведения
+      await soundObject2.unloadAsync();
+    } catch (error) {
+      console.log('Sound error>>>', error);
+    }
+  };  
   //check for collisions
   useEffect(() => {
     if (
@@ -203,12 +200,6 @@ const BallBlitz = () => {
         ballBottom < 250) &&
       obstaclesLeft > ballLeft - 25 &&
       obstaclesLeft < ballLeft + 25
-
-      // ||
-      // ((birdBottom < (obstaclesNegHeightTwo + obstacleHeight + 30) ||
-      // birdBottom > (obstaclesNegHeightTwo + obstacleHeight + gap -30)) &&
-      // (obstaclesLeftTwo > screenWidth/2 -30 && obstaclesLeftTwo < screenWidth/2 + 30 )
-      // )
     ) {
       console.log('game over');
       gameOver();
@@ -227,7 +218,7 @@ const BallBlitz = () => {
     }));
     setBonusPosition({
       x: screenWidth / 2 - 25,
-      y: 150,
+      y: Math.floor(Math.random() * (490 - 300 + 1)) + 300,
     });
     setObstaclesLeft(0);
     setObstaclesHeight(100);
@@ -242,7 +233,7 @@ const BallBlitz = () => {
   return (
     <TouchableWithoutFeedback onPress={startGame}>
       <Space source={bgImage}>
-        <Header gameOver={gameOver}/>
+        <Header gameOver={gameOver} />
         <Ball ballBottom={ballBottom} ballLeft={ballLeft} />
         <Obstacles
           leftCoordinate={obstaclesLeft}
@@ -253,7 +244,10 @@ const BallBlitz = () => {
         {bonus.visibility && <Bonus bonusPosition={bonusPosition} />}
         <StyledText>Score:{isGameOver ? score + bonus.quantity : 0}</StyledText>
         <StartMessage isGameOver={isGameOver} />
-        <Platform platformValueChange={platformValueChange} platformWidth={(route.params.size)?(route.params.size):75} />
+        <Platform
+          platformValueChange={platformValueChange}
+          platformWidth={route.params.size ? route.params.size : 75}
+        />
       </Space>
     </TouchableWithoutFeedback>
   );

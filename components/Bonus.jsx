@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, ImageBackground } from 'react-native';
 import styled from 'styled-components/native';
 
-const bgImage = require('../assets/bonus.png');
+const bgImage = require('../assets/additionalObtacles.png');
 
 const Bonus = ({ bonusPosition }) => {
   const MyBonus = styled(ImageBackground)`

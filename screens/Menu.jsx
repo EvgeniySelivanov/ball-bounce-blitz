@@ -39,20 +39,23 @@ const Span=styled.Text`
 `;
 const Menu = () => {
   const [speed, setSpeed] = useState(5);
+  const [speedBall, setSpeedBall] = useState(15);
   const [size, setSize] = useState(75);
 
   const changeSpeed =  () => {
     setSpeed((speed) => speed * 2);
-    // console.log('speed>>', speed);
-    // await navigation.navigate('BallBlitz', {speed,size});
+    
+  };
+  const changeSpeedBall =  () => {
+    setSpeedBall((speedBall) => speedBall+3);
+
   };
   const play = () => {
-    navigation.navigate('BallBlitz', {speed,size});
+    navigation.navigate('BallBlitz', {speed,size,speedBall});
   };
   const changeSize =() => {
      setSize((size) => size + 25);
-    //  console.log('size>>', size);
-    //  navigation.navigate('BallBlitz', { speed,size });
+   
     
   };
   const defaultOption = () => {
@@ -66,6 +69,7 @@ const Menu = () => {
       <StyledMenu>Menu</StyledMenu>
       <StyledText onPress={play}>Play</StyledText>
       <StyledText onPress={changeSpeed}>Game speed X2:  <Span>{speed}</Span></StyledText>
+      <StyledText onPress={changeSpeedBall}>Change ball speed:  <Span>{speedBall}</Span></StyledText>
       <StyledText onPress={changeSize}>Increase {`\n`}platform size: <Span>{size}</Span></StyledText>
       <StyledText onPress={defaultOption}>Reset options</StyledText>
     </Space>
