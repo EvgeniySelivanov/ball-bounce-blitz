@@ -18,9 +18,10 @@
       "supportsTablet": true
     },
     "android": {
+      "package":"/home/evheniy/Android/Sdk",
       "adaptiveIcon": {
         "foregroundImage": "",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#ffcddd"
       }
     },
     "web": {
