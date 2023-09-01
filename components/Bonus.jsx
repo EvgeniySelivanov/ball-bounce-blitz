@@ -9,8 +9,8 @@ const Bonus = ({ bonusPosition }) => {
   position: 'absolute';
   top: ${bonusPosition.y}px;
   left: ${bonusPosition.x}px;
-  width: 50px;
-  height: 50px;
+  width: 75px;
+  height: 75px;
   z-index: 10;
 `;
 

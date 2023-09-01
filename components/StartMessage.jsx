@@ -8,7 +8,7 @@ const StartMessage = ({isGameOver}) => {
             <Text></Text>
           ) : (
             <Text style={styles.buttonGameOver}>
-              Game Over {`\n`}Touch screen to start
+              Touch screen to start.
             </Text>
           )}
         </View>
