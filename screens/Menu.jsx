@@ -38,8 +38,8 @@ const Span=styled.Text`
   padding: 7px;
 `;
 const Menu = () => {
-  const [speed, setSpeed] = useState(5);
-  const [speedBall, setSpeedBall] = useState(15);
+  const [speed, setSpeed] = useState(10);
+  const [speedBall, setSpeedBall] = useState(10);
   const [size, setSize] = useState(75);
 
   const changeSpeed =  () => {
@@ -70,7 +70,7 @@ const Menu = () => {
       <StyledText onPress={play}>Play</StyledText>
       <StyledText onPress={changeSpeed}>Game speed X2:  <Span>{speed}</Span></StyledText>
       <StyledText onPress={changeSpeedBall}>Change ball speed:  <Span>{speedBall}</Span></StyledText>
-      <StyledText onPress={changeSize}>Increase {`\n`}platform size: <Span>{size}</Span></StyledText>
+      <StyledText onPress={changeSize}>Platform size: <Span>{size}</Span></StyledText>
       <StyledText onPress={defaultOption}>Reset options</StyledText>
     </Space>
   );

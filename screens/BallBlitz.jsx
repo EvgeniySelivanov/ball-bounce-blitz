@@ -45,7 +45,7 @@ const BallBlitz = () => {
   const [score, setScore] = useState(0);
   const [bonus, setBonus] = useState({ quantity: 0, visibility: true });
   const [bonusPosition, setBonusPosition] = useState({
-    x: screenWidth / 1.3 - 25,
+    x: obstaclesLeft-150,
     y: Math.floor(Math.random() * (490 - 300 + 1)) + 300,
   });
   const [obstaclesLeft, setObstaclesLeft] = useState(screenWidth);
@@ -53,7 +53,7 @@ const BallBlitz = () => {
   let obstaclesTimerId;
   let bonusTimerId;
   let gameTimerId;
-  const gap = 250;
+  const gap = 300;
   const obstacleSpeed = route.params.speed;
   const gravity = route.params.speedBall;
   let renderSpeed = 20;
@@ -93,9 +93,9 @@ const BallBlitz = () => {
       setObstaclesHeight(Math.floor(Math.random() * (400 - 300 + 1)) + 300);
       setBonusPosition((bonusPosition) => ({
         ...bonusPosition,
-        x: Math.floor(Math.random() * (350 + 1)),
+        x:obstaclesLeft-150,
       }));
-      soundObject.unloadAsync();
+      
     }
   }, [isGameOver, obstaclesLeft]);
 
@@ -118,10 +118,10 @@ const BallBlitz = () => {
   //bonus used
   useEffect(() => {
     if (
-      bonusPosition.x >= ballLeft-30 &&
-      bonusPosition.x <= ballLeft+ 80 &&
-      bonusPosition.y >= ballTop &&
-      bonusPosition.y <= ballTop + 50
+      ((bonusPosition.x - 20<= ballLeft) &&
+      (bonusPosition.x+95 >= ballLeft-50)) &&
+      ((bonusPosition.y+75 >= ballTop) &&
+      (bonusPosition.y+75 <= ballTop + 10))
     ) {
       clearInterval(bonusTimerId);
       if(bonus.visibility){
@@ -134,7 +134,7 @@ const BallBlitz = () => {
     }
       
     }
-  }, [bonusPosition]);
+  }, [obstaclesLeft]);
 
   //bonus visibility
   useEffect(() => {
@@ -149,8 +149,8 @@ const BallBlitz = () => {
   //jump event
   useEffect(() => {
     if (
-      platformPosition.x <= ballLeft - 25 &&
-      ballLeft <= platformPosition.x + 75 &&
+      platformPosition.x <= ballLeft &&
+      ballLeft <= platformPosition.x + route.params.size &&
       platformPosition.y >= ballBottom &&
       ballBottom <= 300
     ) {
@@ -195,16 +195,15 @@ const BallBlitz = () => {
   //check for collisions
   useEffect(() => {
     if (
-      (ballBottom <= obstaclesHeight - 25 ||
-        ballBottom >= obstaclesHeight + gap + 25 ||
-        ballBottom < 250) &&
-      obstaclesLeft > ballLeft - 25 &&
-      obstaclesLeft < ballLeft + 25
+      (ballTop <= obstaclesHeight ||
+        ballTop >= obstaclesHeight + gap+50) &&
+      ((obstaclesLeft <= ballLeft + 50)&&
+        obstaclesLeft>=ballLeft)
     ) {
       console.log('game over');
       gameOver();
     }
-  });
+  },[obstaclesLeft]);
 
   const gameOver = () => {
     soundObject.unloadAsync();
@@ -220,8 +219,8 @@ const BallBlitz = () => {
       x: screenWidth / 2 - 25,
       y: Math.floor(Math.random() * (490 - 300 + 1)) + 300,
     });
-    setObstaclesLeft(0);
-    setObstaclesHeight(100);
+    setObstaclesLeft(screenWidth);
+    // setObstaclesHeight(100);
     setIsGameOver(false);
   };
   const startGame = () => {
@@ -246,7 +245,7 @@ const BallBlitz = () => {
         <StartMessage isGameOver={isGameOver} />
         <Platform
           platformValueChange={platformValueChange}
-          platformWidth={route.params.size ? route.params.size : 75}
+          platformWidth={route.params.size }
         />
       </Space>
     </TouchableWithoutFeedback>

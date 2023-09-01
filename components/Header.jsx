@@ -22,11 +22,14 @@ const styles = StyleSheet.create({
     width:'100%',
     backgroundColor:'#9b21d3',
     textAlign:'center',
+    zIndex:50,
   },
   text:{
     textAlign:'center',
     fontSize:20,
    color:'white',
+   zIndex:50,
+
   }
 })
 
